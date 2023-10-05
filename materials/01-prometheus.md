@@ -1,66 +1,66 @@
 # Prometheus
 
-Prometheus — это набор инструментов для мониторинга и оповещения систем с открытым исходным кодом, изначально созданный в SoundCloud. С момента его создания в 2012 году многие компании и организации начали использовать Prometheus, а благодаря открытому исходному коду он находит высокую поддержку среди разработчиков. Prometheus содержит в себе базу метрик в виде базы данных временных рядов. 
+Prometheus is an open-source system monitoring and alerting toolset originally created by SoundCloud. Since its creation in 2012, many companies and organizations have started using Prometheus, and thanks to its open source code, it finds high support among developers. Prometheus contains a database of metrics in the form of a time series database.
 
-Метрики — это числовые измерения. Временной ряд означает, что изменения записываются с течением времени. То, что пользователи хотят измерять, отличается от приложения к приложению. Для веб-сервера это может быть время запроса, для базы данных это может быть количество активных подключений или количество активных запросов и т. д.
+Metrics are numerical measurements. A time series means that changes are recorded over time. What users want to measure differs from application to application. For a web server it might be the request time, for a database it might be the number of active connections or the number of active requests, etc.
 
-Метрики играют важную роль в понимании того, почему приложение работает определенным образом. Предположим, вы запускаете веб-приложение и обнаруживаете, что оно работает медленно. Вам понадобится некоторая информация, чтобы узнать, что происходит с вашим приложением. Например, приложение может работать медленно, если количество запросов велико. Если у вас есть метрика количества запросов, вы можете определить причину и увеличить количество серверов для обработки нагрузки.
+Metrics play an important role in understanding why an application performs a certain way. Suppose you run a web application and find that it runs slowly. You need some information to know what is going on with your application. For example, the application may be slow if the number of requests is high. If you have a metric for the number of requests, you can determine the cause and increase the number of servers to handle the load.
 
-Обычно Prometheus состоит из нескольких основных компонентов:
+Usually Prometheus consists of several main components:
 
-- Prometheus Server - ядро системы;
-- агенты сборки метрик или экспортеры (exporters);
-- клиентские библиотеки для сборки метрик приложения (разделенные по языкам программирования);
-- Alert Manager, управляющий отслеживанием критических событий в системе.
+- Prometheus Server - system kernel;
+- metrics collection agents or exporters;
+- client libraries for collecting application metrics (separated by programming languages);
+- Alert Manager, which manages the monitoring of critical events in the system.
 
-Prometheus Server агрегирует в себе все собираемые в системе метрики и предоставляет их через запросы в языке PromQL. Эти метрики могут быть как метриками внешними для приложения (их собирают экспортеры, например node_exporter), так и внутренними, собираемыми непосредственно в приложении при помощи клиентских библиотек.
+Prometheus Server aggregates all the metrics collected in the system and provides them through queries in PromQL language. These metrics can be external to the application (collected by exporters such as node_exporter) or internal, collected directly in the application using client libraries.
 
-**Основные экспортеры:**
+**Major exporters:**
 
-1. Node exporter - для сборки метрик с машин или узлов кластера (nodes).
+1. Node exporter - to collect metrics from machines or nodes in a cluster.
 
-2. cAdvisor - для сборки метрик с docker-контейнеров
+2. cAdvisor - to collect metrics from docker containers
 
-3. blackbox exporter - для сборки метрик доступности эндпоинтов по HTTP, HTTPS, DNS, TCP, ICMP и gRPC.
+3. blackbox exporter - to collect metrics for HTTP, HTTPS, DNS, TCP, ICMP and gRPC endpoint availability.
 
-Сборка метрик приложений производится через специальную библиотеку, например, Micrometer для Java.
+Application metrics are collected via a special library, such as Micrometer for Java.
 
-Всего Prometheus поддержвиает три типа метрик.
+Prometheus supports three types of metrics.
 
-| Тип |	Предназначение | Пример |
+| Type | Purpose | Example |
 |-------------|------------|----------|
-| Gauge | Измерение использования ресурсов, мощности и т. д Значения, которые могут увеличиваться и уменьшаться, и которые имеют фиксированные верхние границы | Размер коллекции, количество запущенных потоков, колчиество сообщений в очереди, использование памяти |
-| Counter | Измерение ряда событий или действий — величина, которая только увеличивается, а не уменьшается. | Общее количество обработанных заказов, общее количество выполненных задач и т. д. |
-| Timer | Измерение кратковременных событий и их частоты | Время выполнения метода, время выполнения запроса |
+| Gauge | Measurement of resource use, capacity, etc. Values that can increase and decrease, and which have fixed upper limits | Collection size, number of threads running, number of messages in queue, memory usage |
+| Counter | The measurement of a series of events or actions is a value that only increases, not decreases. | The total number of processed orders, the total number of completed tasks, etc. |
+| Timer | Measurement of short-term events and their frequency | Method execution time, query execution time |
 
-У Prometheus имеется свой конфигурационный файл в формате yml. Простейший конфигурационный файл Prometheus может выглядеть следующим образом:
+Prometheus has its own configuration file in yml format. The simplest Prometheus configuration file can look like this
 
 ```yml
 global:
-  scrape_interval:     15s              # время, через которое Prometheus собирает метрики
-  evaluation_interval: 15s              # время, через которое Prometheys высчитывает метрики
-  scrape_timeout: 10s                   # время, по прошествию которого при попытке собрать метрику, она будет считаться не полученной
+  scrape_interval:     15s              # the time in which Prometheus collects metrics
+  evaluation_interval: 15s              # the time in which Prometheys calculates metrics
+  scrape_timeout: 10s                   # the time after which when you try to collect the metric, it will be considered as not received
 
 scrape_configs:
   - job_name: 'spring boot scrape'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:8080']     # хост, для считывания метрик
+      - targets: ['localhost:8080']     # a host for reading metrics
 ```
 
 ## PromQL
 
-Язык запросов Prometheus - это PromQL (Prometheus Query Language). PromQL позволяет пользователю запросить и агрегировать временные ряды метрик, хранимых в базе данных Prometheus.
+Prometheus query language is PromQL (Prometheus Query Language). PromQL allows the user to query and aggregate the time series of metrics stored in the Prometheus database.
 
-PromQL содердит множество операций, вот некоторые из них:
+PromQL contains many operations, here are some of them:
 
-- Выборка (select) метрик: вы можете выбрать одну или несколько метрик для запроса. Пример: up{job="prometheus"}
+- Select metrics: you can select one or more metrics to query. Example: up{job="prometheus"}
 
-- Агрегация (aggregation): вы можете агрегировать временные ряды метрик с помощью различных функций, таких как sum(), avg(), max(), min() и другие. Пример: sum(rate(http_requests_total{job="my-webapp"}[5m])) by (instance)
+- Aggregation: you can aggregate time series metrics using different functions, such as sum(), avg(), max(), min() and others. Example: sum(rate(http_requests_total{job="my-webapp"}[5m])) by (instance)
 
-- Выполнение математических операций: вы можете выполнять математические операции с метриками, такие как сложение, вычитание, умножение и деление. Пример: rate(http_requests_total{job="my-webapp"}[5m]) / count(node_cpu_seconds_total{mode="idle"})
+- Performing mathematical operations: you can perform mathematical operations with metrics, such as addition, subtraction, multiplication, and division. Example: rate(http_requests_total{job="my-webapp"}[5m]) / count(node_cpu_seconds_total{mode="idle"})
 
-- Фильтрация (filtering): вы можете фильтровать метрики с помощью операторов сравнения, таких как =, !=, <, >, <=, >= и других. Пример: http_requests_total{status_code="500"}
+- Filtering: you can filter metrics using comparison operators such as =, !=, <, >, <=, >= and others. Example: http_requests_total{status_code="500"}
 
-- Группировка (grouping): вы можете группировать временные ряды метрик по определенным меткам (labels) с помощью ключевого слова by. Пример: sum(rate(http_requests_total{job="my-webapp"}[5m])) by (instance)
+- Grouping: you can group a time series of metrics by specific labels using the keyword by. Example: sum(rate(http_requests_total{job="my-webapp"}[5m])) by (instance)

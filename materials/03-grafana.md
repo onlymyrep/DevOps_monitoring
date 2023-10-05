@@ -1,58 +1,58 @@
 # Grafana
 
-Grafana - это один из популярнейших инструментов визуализации и анализа метрик и логов приложений и их инфраструктур. Grafana визуализирует метрики при помощи виджетов (графиков, полосок, чисел, таблиц и так далее), формирующихся в дашборды.
+Grafana is one of the most popular tools for visualizing and analyzing metrics and application logs and their infrastructures. Grafana visualizes metrics using widgets (graphs, bars, numbers, tables, and so on) formed into dashboards.
 
-Grafana использует предоставляемые источниками (data source) языки запросов для выделения рядов метрик и логов, которые визуализируются в виде виджетов.
+Grafana uses data source-provided query languages to extract series of metrics and logs, which are visualized as widgets.
 
-Grafana предоставляет набор стандартных виджетов, такие как:
+Grafana provides a set of standard widgets, such as:
 
 **Graphs & charts**
 
-- Time series - стандартные графики.
-- State timeline - график с изменением состояния с течением времени.
-- Status history - график с периодческим состоянием по времени.
-- Bar chart - гистограмма по категориям.
-- Histogram - гистограмма по группам значений.
-- Heatmap - двумерная матрица, которая показывает величину явления в виде цвета в двух измерениях.
-- Pie chart - круговая диаграмма.
-- Candlestick - график свеч.
+- Time series - standard graphs.
+- State timeline - graph with state changes over time.
+- Status history - graph with periodic state over time.
+- Bar chart - histogram by category.
+- Histogram - histogram by groups of values.
+- Heatmap - a two-dimensional matrix that shows the magnitude of the phenomenon as color in two dimensions.
+- Pie chart
+- Candlestick
 
 **Stats & numbers**
 
-- Stat для большой статистики и дополнительного спарклайна.
-- Bar gauge представляет собой горизонтальную или вертикальную шкалу.
+- Stat for big stats and optional sparkline.
+- Bar gauge is a horizontal or vertical bar gauge.
 
 **Misc**
 
-- Table - таблица.
-- Logs - таблица журнальных записей (логов).
-- Node Graph - направленные графы.
+- Table.
+- Logs.
+- Node Graph for directed graphs.
 
-## Конфигурация Grafana
+## Grafana configuration
 
-Файл конфигурации Grafana находится в каталоге /etc/grafana/grafana.ini (при установке из пакетов) или в каталоге /usr/share/grafana/conf/ (при установке из исходных кодов). Вот примеры настроек, которые могут находиться в файле конфигурации Grafana:
+The Grafana configuration file is in /etc/grafana/grafana.ini (when installing from packages) or /usr/share/grafana/conf/ (when installing from the source). Here are examples of settings that might be in a Grafana configuration file:
 
 ```
-# http порт
+# http port
 http_port = 3000
 
-# тип базы данных, в которой хранятся метрики
+# type of the database that stores metrics
 database_type = mysql
 
-# параметры подключения к базе данных
+# database connection parameters
 [database]
 host = localhost
 name = grafana
 user = grafana
 password = mypassword
 
-# настройки авторизации и аутентификации
+# Authorization and authentication settings
 [auth]
 disable_login_form = false
 disable_signout_menu = false
 login_remember_days = 7
 
-# настройки почтовых уведомлений
+# mail notification settings
 [smtp]
 enabled = true
 host = smtp.gmail.com:587
@@ -61,4 +61,4 @@ password = mypassword
 from_address = myemail@gmail.com
 ```
 
-Это только несколько примеров настроек, которые могут быть включены в файл конфигурации Grafana. В зависимости от ваших потребностей, вам могут потребоваться другие настройки и параметры. Более подробную информацию о файлах конфигурации Grafana вы можете найти в официальной документации Grafana.
+These are just a few examples of settings that can be included in a Grafana configuration file. Depending on your needs, you may have other settings and parameters. You can find more information about Grafana configuration files in the official Grafana documentation.

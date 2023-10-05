@@ -1,19 +1,19 @@
 # Loki
 
-Loki — это горизонтально масштабируемая, высокодоступная многопользовательская система агрегации логов, вдохновленная Prometheus. Loki разработан, чтобы быть очень экономичным и простым в эксплуатации. 
+Loki is a horizontally scalable, highly available multi-user log aggregation system inspired by Prometheus. Loki is designed to be very cost-effective and easy to use.
 
-Loki так же как и Prometheus обладает клиент-серверной архитектурой с ядров в Loki, который хранит логи всей системы, и многочисленными агентами - локальными сборщиками метрик (promtail), которые передают сами логи Loki.
+Loki as well as Prometheus has a client-server architecture with a kernel in Loki that stores the logs of the whole system, and numerous agents - local metrics collectors (promtail) that pass the logs themselves to Loki.
 
-Чтобы получить логи из Loki, нужно воспользоваться запросом в специальном языке - LogQL, похожий на PromQL.
+To get logs from Loki, you need to use a query in a special language - LogQL, similar to PromQL.
 
-Станадртный запрос LogQL сотсоит из двух частей: селектора и фильтра. Селектор используется для поиска по меткам, по которым индексируются логи в Loki, а фильтр - для высеивания нужного подмножества выбранных селектором логов при помощи поискового запроса или регулярного выражения.
+The standard LogQL query consists of two parts: a selector and a filter. The selector is used to search for labels that index logs in Loki, and the filter is used to select a subset of the logs selected by the selector using a search query or a regular expression.
 
-Например:
+For example:
 
 ```
 {cluster="ops-tools1",container="ingress-nginx"}
     | json
     | __error__ != "JSONParserErr"
 ```
-где
-`{cluster="ops-tools1",container="ingress-nginx"}` - это селектор, а `| json` и `| __error__ != "JSONParserErr"` - это фильтры.
+where
+`{cluster="ops-tools1",container="ingress-nginx"}` is a selector, and `| json` and `| __error__ != "JSONParserErr"` are filters.
