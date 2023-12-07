@@ -82,4 +82,4 @@ In this chapter you will configure the Alert Manager to alert you about critical
 
 3) Configure notifications via personal email and Telegram.
 
-💡 [Click here](https://forms.yandex.ru/cloud/6475c297f47e7323e1eca25c/), **to share feedback on this project with us**. It's anonymous and will help the Pedago team make your learning better.
+💡 [Click here](https://forms.yandex.ru/cloud/6475c297f47e7323e1eca25c/), **to share feedback on this project with us**. It's anonymous and will help the Product team make your learning better.
