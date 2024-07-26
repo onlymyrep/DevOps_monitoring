@@ -2,6 +2,8 @@
 
 Monitoring tools to track metrics and critical situations.
 
+💡 [Tap here](https://new.oprosso.net/p/4cb31ec3f47a4596bc758ea1861fb624) **to leave your feedback on the project**. It's anonymous and will help our team make your educational experience better. We recommend completing the survey immediately after the project.
+
 ## Contents
 
 1. [Chapter I](#chapter-i) 
@@ -81,5 +83,3 @@ In this chapter you will configure the Alert Manager to alert you about critical
    - CPU usage for the service exceeds 10%.
 
 3) Configure notifications via personal email and Telegram.
-
-💡 [Click here](https://forms.yandex.ru/cloud/6475c297f47e7323e1eca25c/), **to share feedback on this project with us**. It's anonymous and will help the Product team make your learning better.
