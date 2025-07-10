@@ -1,0 +1,26 @@
+groups:
+- name: critical-alerts
+  rules:
+  - alert: LowMemory
+    expr: node_memory_MemAvailable_bytes < 100 * 1024 * 1024  # 100 MB
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Available memory is low ({{ $value }} bytes)"
+
+  - alert: HighRAMUsage
+    expr: container_memory_usage_bytes > 1e9  # 1 GB
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Container RAM usage exceeded 1GB ({{ $value }} bytes)"
+
+  - alert: HighCPUUsage
+    expr: rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_service_name!=""}[5m]) > 0.1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "CPU usage >10% ({{ $value }})"

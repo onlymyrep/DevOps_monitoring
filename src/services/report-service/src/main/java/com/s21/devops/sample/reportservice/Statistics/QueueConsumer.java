@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class QueueConsumer {
     @Autowired
     private BookingStatsService bookingStatsService;
+    private final ReportMetrics metrics;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -29,5 +30,11 @@ public class QueueConsumer {
     private void processMessage(String message) throws JsonProcessingException {
         BookingStatisticsMessage bsm = objectMapper.readValue(message, BookingStatisticsMessage.class);
         bookingStatsService.postBookingStatsMessage(bsm);
+    }
+
+    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    public void receiveMessage(BookingStatisticsMessage message) {
+        metrics.incrementMessagesProcessed();
+        
     }
 }

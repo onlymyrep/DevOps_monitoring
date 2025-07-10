@@ -5,6 +5,8 @@ import com.s21.devops.sample.paymentsession.Exception.NoPaymentException;
 import com.s21.devops.sample.paymentsession.Exception.PaymentNotFoundException;
 import com.s21.devops.sample.paymentsession.Service.PaymentService;
 import com.s21.devops.sample.paymentsession.Service.SecurityService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +22,28 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/payments")
 public class PaymentController {
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
+    private final SecurityService securityService;
+    private final Counter paymentRequestsCounter;
 
     @Autowired
-    private SecurityService securityService;
+    public PaymentController(PaymentService paymentService, 
+                           SecurityService securityService,
+                           MeterRegistry registry) {
+        this.paymentService = paymentService;
+        this.securityService = securityService;
+        
+        this.paymentRequestsCounter = Counter.builder("payment.requests.total")
+                .description("Total payment requests")
+                .register(registry);
+    }
 
     @PostMapping("")
     public ResponseEntity<Void> pay(@Valid @RequestBody PayReq payReq)
             throws NoPaymentException {
+        paymentRequestsCounter.increment();
         UUID paymentUid = paymentService.pay(payReq);
         if (paymentUid != null) {
-            System.out.println("payed");
             return ResponseEntity.created(ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{paymentUid}")
@@ -47,15 +59,15 @@ public class PaymentController {
     @DeleteMapping("/{paymentUid}")
     public void refund(@PathVariable UUID paymentUid)
             throws PaymentNotFoundException {
-        System.out.println("refunded");
+        paymentRequestsCounter.increment();
         paymentService.delete(paymentUid);
     }
 
     @GetMapping("/authorize")
     public ResponseEntity<Void> authorize(@RequestHeader("authorization") String authorization)
             throws InvalidKeySpecException, NoSuchAlgorithmException, EntityNotFoundException {
+        paymentRequestsCounter.increment();
         String jwtToken = securityService.authorize(authorization);
         return ResponseEntity.ok().header("Authorization", "Bearer " + jwtToken).build();
     }
-
 }

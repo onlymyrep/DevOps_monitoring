@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.47.1
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    network_mode: host
+    deploy:
+      mode: global
+
+  loki:
+    environment:
+      TZ: "America/New_York"
+    image: grafana/loki:2.8.4
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    network_mode: host
+
+  grafana:
+    image: grafana/grafana:10.1.5
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/config.monitoring:/etc/grafana/config.ini
+    environment:
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      TZ: "America/New_York"
+    ports:
+      - "3000:3000"
+    network_mode: host
+    depends_on:
+      - prometheus
+      - loki
+
+  alertmanager:
+    environment:
+      TZ: "America/New_York"
+    image: prom/alertmanager:v0.26.0
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9094:9093"
+    network_mode: host
+
+  node-exporter:
+    image: prom/node-exporter:v1.6.1
+    deploy:
+      mode: global
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    network_mode: host
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    deploy:
+      mode: global
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    network_mode: host
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.24.0
+    ports:
+      - "9115:9115"
+    network_mode: host

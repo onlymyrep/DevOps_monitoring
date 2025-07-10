@@ -5,6 +5,8 @@ import com.s21.devops.sample.bookingservice.Communication.*;
 import com.s21.devops.sample.bookingservice.Exception.*;
 import com.s21.devops.sample.bookingservice.Service.BookingService;
 import com.s21.devops.sample.bookingservice.Service.SecurityService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.http.HttpStatus;
@@ -21,14 +23,32 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/booking")
 public class BookingController {
-    @Autowired
-    private SecurityService securityService;
+    private final SecurityService securityService;
+    private final BookingService bookingService;
+    private final Counter bookingsCounter;
+    private final Counter rabbitmqSentCounter;
+    private final Counter rabbitmqProcessedCounter;
 
     @Autowired
-    private BookingService bookingService;
-
-    //TO_DO
-    //3. patch availability
+    public BookingController(SecurityService securityService, 
+                            BookingService bookingService,
+                            MeterRegistry registry) {
+        this.securityService = securityService;
+        this.bookingService = bookingService;
+        
+        // Initialize metrics
+        this.bookingsCounter = Counter.builder("bookings.total")
+                .description("Total bookings created")
+                .register(registry);
+                
+        this.rabbitmqSentCounter = Counter.builder("rabbitmq.sent.messages")
+                .description("Messages sent to RabbitMQ")
+                .register(registry);
+                
+        this.rabbitmqProcessedCounter = Counter.builder("rabbitmq.processed.messages")
+                .description("Messages processed from RabbitMQ")
+                .register(registry);
+    }
 
     @GetMapping("/authorize")
     public ResponseEntity<Void> authorize(@RequestHeader("authorization") String authorization)
@@ -42,16 +62,20 @@ public class BookingController {
     public void bookHotel(@Valid @RequestBody BookHotelReq bookHotelReq)
             throws ReservationAlreadyExistsException, NoPaymentException, CustomJwtException,
             CustomRuntimeException, PaymentNotFoundException, LoyaltyNotFoundException, JsonProcessingException, CoudntPayException {
-        System.out.println("hotel was booked");
+        bookingsCounter.increment();
+        rabbitmqSentCounter.increment();
         bookingService.bookHotel(bookHotelReq);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    // This method should be called when processing RabbitMQ messages
+    public void processRabbitMessage() {
+        rabbitmqProcessedCounter.increment();
+    }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{hotelUid}")
     public void removeBooking(@PathVariable UUID hotelUid, @RequestParam UUID userUid)
             throws NoPaymentException, CustomJwtException, CustomRuntimeException, PaymentNotFoundException, JsonProcessingException {
-        System.out.println("booking for " + hotelUid.toString() + " was removed");
         bookingService.removeBooking(hotelUid, userUid);
     }
 

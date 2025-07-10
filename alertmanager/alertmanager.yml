@@ -1,0 +1,25 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 3h
+  receiver: 'telegram-email'
+
+receivers:
+- name: 'telegram-email'
+  email_configs:
+  - to: 'your-email@example.com'
+    from: 'alertmanager@example.com'
+    smarthost: smtp.gmail.com:587
+    auth_username: 'your-email@gmail.com'
+    auth_password: 'your-app-password'
+    send_resolved: true
+    
+  telegram_configs:
+  - api_url: "https://api.telegram.org"
+    bot_token: "7813846722:AAF8BVawTy7DaVCEtMSehjoet78T2gDfQ3U"
+    chat_id: 7380578080
+    send_resolved: true

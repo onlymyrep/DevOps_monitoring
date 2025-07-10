@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: postgres
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+rabbitmq:
+  host: ${RABBIT_MQ_HOST}
+  port: ${RABBIT_MQ_PORT}
+  username: ${RABBIT_MQ_USER}
+  password: ${RABBIT_MQ_PASSWORD}
+
+hotel-service:
+  url: http://${HOTEL_SERVICE_HOST}:${HOTEL_SERVICE_PORT}
+payment-service:
+  url: http://${PAYMENT_SERVICE_HOST}:${PAYMENT_SERVICE_PORT}
+loyalty-service:
+  url: http://${LOYALTY_SERVICE_HOST}:${LOYALTY_SERVICE_PORT}

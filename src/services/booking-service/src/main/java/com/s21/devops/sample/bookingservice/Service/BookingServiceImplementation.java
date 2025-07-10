@@ -243,4 +243,24 @@ public class BookingServiceImplementation implements BookingService {
             queueProducer.putStatistics(bsm);
         }
     }
+
+
+}
+
+@Service
+public class BookingServiceImplementation {
+    private final BookingMetrics metrics;
+
+    @Override
+    public BookingRes createBooking(...) {
+        metrics.incrementBookings();
+        metrics.incrementMessagesSent();
+        
+    }
+
+    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    public void processMessage(BookingStatisticsMessage message) {
+        metrics.incrementMessagesProcessed();
+        
+    }
 }
