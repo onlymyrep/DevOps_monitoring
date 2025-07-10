@@ -11,11 +11,11 @@ route:
 receivers:
 - name: 'telegram-email'
   email_configs:
-  - to: 'your-email@example.com'
+  - to: 'tfgryujhgh@gmail.com'
     from: 'alertmanager@example.com'
     smarthost: smtp.gmail.com:587
-    auth_username: 'your-email@gmail.com'
-    auth_password: 'your-app-password'
+    auth_username: 'tfgryujhgh@gmail.com'
+    auth_password: 'fdgvvrtscdsbcecge'
     send_resolved: true
     
   telegram_configs:
